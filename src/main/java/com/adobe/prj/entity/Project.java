@@ -9,7 +9,7 @@ package com.adobe.prj.entity;
  *
  */
 public class Project {
-	private String id;
+	private int  id;
 	private String name;
 	private boolean hasProjectManager;
 	/**
@@ -17,7 +17,7 @@ public class Project {
 	 * @param name
 	 * @param hasProjectManager
 	 */
-	public Project(String id, String name, boolean hasProjectManager) {
+	public Project(int id, String name, boolean hasProjectManager) {
 		this.id = id;
 		this.name = name;
 		this.hasProjectManager = hasProjectManager;
@@ -25,13 +25,13 @@ public class Project {
 	/**
 	 * @return the id
 	 */
-	public final String getId() {
+	public final int getId() {
 		return id;
 	}
 	/**
 	 * @param id the id to set
 	 */
-	public final void setId(String id) {
+	public final void setId(int id) {
 		this.id = id;
 	}
 	

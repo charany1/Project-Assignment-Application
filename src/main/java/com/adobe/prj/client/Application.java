@@ -5,6 +5,7 @@ package com.adobe.prj.client;
 
 import com.adobe.prj.client.service.AddEmployeeService;
 import com.adobe.prj.client.service.AddProjectService;
+import com.adobe.prj.client.service.AssignProjectManagerService;
 import com.adobe.prj.client.ui.AddEmployeeUi;
 import com.adobe.prj.dao.EmployeeDao;
 import com.adobe.prj.dao.PersistenceException;
@@ -87,6 +88,8 @@ public class Application {
 		//AddEmployeeService.getAndAddEmployee();
 		
 		//AddProjectService.getAndAddProject();
+		
+		AssignProjectManagerService.assignManagerToProject();
 		
 		
 		

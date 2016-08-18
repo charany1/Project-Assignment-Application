@@ -11,19 +11,28 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.adobe.prj.dao.FetchException;
 import com.adobe.prj.dao.PersistenceException;
 import com.adobe.prj.dao.ProjectDao;
 import com.adobe.prj.entity.Project;
 
 /**
  * @author rahujai
+ * @author danchara
  * 
  * For CRUD operations on project table in database.
  *
  */
 public class ProjectDaoJdbcImpl implements ProjectDao {
 	
-	
+	/*
+	 * /(non-Javadoc)
+	 * @see com.adobe.prj.dao.ProjectDao#addProject(com.adobe.prj.entity.Project)
+	 * Add a new project to database .
+	 * @param project New project that is to be added .
+	 * @return number of rows effected in operation , 1 means successful addition of employee ,otherwise failure 
+	 * @throws PersistenceException
+	 */
 	public int addProject(Project project) throws PersistenceException{
 		Connection connection = null;
 		PreparedStatement preparedStatement = null;
@@ -44,7 +53,7 @@ public class ProjectDaoJdbcImpl implements ProjectDao {
 			
 			numRowsEffected = preparedStatement.executeUpdate();
 			
-			return numRowsEffected;
+			
 			
 			
 		} catch (SQLException e) {
@@ -54,47 +63,147 @@ public class ProjectDaoJdbcImpl implements ProjectDao {
 			DBUtil.releaseStatement(preparedStatement);
 			DBUtil.releaseConnection(connection);
 		}
+		return numRowsEffected;
+	}
+	
+	
+	/*
+	 * /(non-Javadoc)
+	 * @see com.adobe.prj.dao.ProjectDao#getProjectsWithoutManager()
+	 * Get projects which don't already have managers
+	 * @return List of projects without managers.
+	 * @throws FetchException
+	 */
+	public List<Project> getProjectsWithoutManager() throws FetchException {
+		
+		Connection connection = null;
+		PreparedStatement preparedStatement = null;
+		
+		List<Project> projectsWithoutManager = new ArrayList<Project>();
+		
+		
+		
+		try {
+			connection = DBUtil.getConnection();
+			String fetchProjectsWithoutManagerSql = "SELECT id, name,has_project_manager FROM project WHERE "
+					+ "has_project_manager = false;";
+			
+			preparedStatement = connection.prepareStatement(fetchProjectsWithoutManagerSql);
+			
+			ResultSet resultSet = preparedStatement.executeQuery(fetchProjectsWithoutManagerSql);
+			
+			Project project;
+			int projectId;
+			String projectName;
+			boolean hasProjectManager;
+			
+			while(resultSet.next()){
+				projectId = resultSet.getInt(1);
+				projectName = resultSet.getString(2);
+				hasProjectManager = resultSet.getBoolean(3);
+				
+				project = new Project(projectId,projectName,hasProjectManager);
+				
+				projectsWithoutManager.add(project);				
+			}
+			
+			
+		} catch (SQLException e) {
+			throw new FetchException("Couldn't fetch projects without manager.",e);
+		}finally{
+			DBUtil.releaseStatement(preparedStatement);
+			DBUtil.releaseConnection(connection);
+		}
+		
+		return projectsWithoutManager;
 	}
 
 	/*
-	@Override
-	public List<Project> getExistingProjects() {
-		String SQL = "SELECT name FROM projects WHERE pm_id=-1";
-		List<Project> result = new ArrayList<Project>();
+	 * /(non-Javadoc)
+	 * @see com.adobe.prj.dao.ProjectDao#updateProjectHasManager(int)
+	 * Updates has_project_manager to true . Called from ProjectEmployeeDao#addProjectManagerAssignemnt .
+	 * 
+	 * @param projectId id of project whose has_project_manager column is to be set
+	 * @return number of rows effected in update operation : 1 mean successful operation ,anything else 
+	 * indicates failure
+	 * 
+	 * @throws PersistenceException
+	 */
+	public int updateProjectHasManager(int projectId) throws PersistenceException {
+
+		Connection connection = null;
+		PreparedStatement preparedStatement = null;
+		
+		int numRowsEffected;
+		
+		String updateProjectHasManagerSql = "UPDATE project SET has_project_manager = true WHERE id = ?;";
+		
 		try {
-			Statement stmt = con.createStatement();
-			ResultSet rs = stmt.executeQuery(SQL);
-			while(rs.next()) {
-				Project p = new Project(rs.getString("name"));
-				p.setId(rs.getInt("id"));
-				p.setPm_id(rs.getInt("pm_id"));
-				result.add(p);
-			}
+			connection = DBUtil.getConnection();
+			preparedStatement = connection.prepareStatement(updateProjectHasManagerSql);
+			preparedStatement.setInt(1, projectId);
+			numRowsEffected = preparedStatement.executeUpdate();
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			throw new PersistenceException("Unable to update project's has_project_manager status to true.",e);
+		}finally {
+			DBUtil.releaseStatement(preparedStatement);
+			DBUtil.releaseConnection(connection);
 		}
-		return result;
+		return numRowsEffected;
+		
+				
+	}
+	
+	
+	/*
+	 * (non-Javadoc)
+	 * @see com.adobe.prj.dao.ProjectDao#getAllProjects()
+	 * 
+	 *  
+	 */
+
+	public List<Project> getAllProjects() throws FetchException {
+		
+		Connection connection = null;
+		Statement statement = null;
+		
+		List<Project>projectList = new ArrayList<Project>();
+
+		
+		
+		try {
+			connection = DBUtil.getConnection();
+			statement = connection.createStatement();
+			String getAllProjectsSql = "SELECT id, name,has_project_manager FROM project;";
+			
+			ResultSet resultSet = statement.executeQuery(getAllProjectsSql);
+			
+			Project project;
+			int projectId;
+			String projectName;
+			boolean hasProjectManager;
+			
+			while(resultSet.next()){
+				projectId = resultSet.getInt(1);
+				projectName = resultSet.getString(2);
+				hasProjectManager = resultSet.getBoolean(3);
+				
+				project = new Project(projectId,projectName,hasProjectManager);
+				
+				projectList.add(project);
+				
+			}
+			
+			
+			
+		} catch (SQLException e) {
+			throw new FetchException("Unable to fetch all projects.",e);
+		}
+		
+		
+		
+		return projectList;
 	}
 
-	@Override
-	public List<Project> getAllProjects() {
-		String SQL = "SELECT name FROM projects";
-		List<Project> result = new ArrayList<Project>();
-		try {
-			Statement stmt = con.createStatement();
-			ResultSet rs = stmt.executeQuery(SQL);
-			while(rs.next()) {
-				Project p = new Project(rs.getString("name"));
-				p.setId(rs.getInt("id"));
-				p.setPm_id(rs.getInt("pm_id"));
-				result.add(p);
-			}
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return result;
-	}
-	*/
+	
 }

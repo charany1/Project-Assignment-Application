@@ -2,9 +2,13 @@ package com.adobe.prj.dao.jdbc;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.adobe.prj.dao.EmployeeDao;
+import com.adobe.prj.dao.FetchException;
 import com.adobe.prj.dao.PersistenceException;
 import com.adobe.prj.entity.Employee;
 
@@ -18,7 +22,14 @@ public class EmployeeDaoJdbcImpl implements EmployeeDao {
 
 	
 	
-	
+	/*
+	 * /(non-Javadoc)
+	 * @see com.adobe.prj.dao.EmployeeDao#addEmployee(com.adobe.prj.entity.Employee)
+	 * Add an employee to database .
+	 * @param employee new employee that is to be added
+	 * @return number of rows effected in operation , 1 means successful addition of employee ,otherwise failure 
+	 * @throws PersistenceException 
+	 */
 	public int addEmployee(Employee employee) throws PersistenceException {
 			
 		int numRowsEffected = -1;
@@ -34,12 +45,10 @@ public class EmployeeDaoJdbcImpl implements EmployeeDao {
 			
 			preparedStatement = connection.prepareStatement(addEmployeeSql);
 			
-			
-			
-			
 			preparedStatement.setString(1, employee.getName());
 			preparedStatement.setString(2, employee.getEmail());
 			preparedStatement.setInt(3,employee.getRole().ordinal());
+			
 			numRowsEffected = preparedStatement.executeUpdate();
 			
 			return numRowsEffected;
@@ -55,94 +64,94 @@ public class EmployeeDaoJdbcImpl implements EmployeeDao {
 	}
 	
 	
+	
 	/*
-	@Override
-	public List<Employee> getExistingProjectManagers() {
-		String SQL = "SELECT id, first_name, last_name, email, p_id, is_pm FROM employees WHERE is_pm=true";
-		List<Employee> result = new ArrayList<Employee>();
+	 * /(non-Javadoc)
+	 * @see com.adobe.prj.dao.EmployeeDao#getProjectManagers()
+	 * 
+	 * Get employees who are project managers from employee table .
+	 * @return list of managers
+	 * @throws FetchException
+	 */
+	public List<Employee> getProjectManagers() throws FetchException {
+		
+		Connection connection = null;
+		PreparedStatement preparedStatement = null;
+		
+		List<Employee> projectManagers = new ArrayList<Employee>();
+		
+		
+		
 		try {
-			Statement stmt = con.createStatement();
-			ResultSet rs = stmt.executeQuery(SQL);
+			connection = DBUtil.getConnection();
+			String getProjectManagerSql = "SELECT id, name,email,role FROM employee WHERE role=1;";
+			preparedStatement = connection.prepareStatement(getProjectManagerSql);
+			ResultSet resultSet = preparedStatement.executeQuery(getProjectManagerSql);
 			
+			Employee employee ;
 			
-			while(rs.next()) {
-				Employee e = new Employee(rs.getString("first_name"), rs.getString("last_name"), rs.getString("email"));
-				e.setId(rs.getInt("id"));
-				e.setP_id(rs.getInt("p_id"));
-				e.setIs_pm(rs.getBoolean("is_pm"));
-				result.add(e);
+			int employeeId;
+			String employeeName;
+			String employeeEmail;
+			int employeeRole;
+			
+			while(resultSet.next()){
+				employeeId = resultSet.getInt(1);
+				employeeName = resultSet.getString(2);
+				employeeEmail = resultSet.getString(3);
+				employeeRole = resultSet.getInt(4);
+				
+				employee = new Employee(employeeId,employeeName,employeeEmail,employeeRole);
+				
+				projectManagers.add(employee);
 			}
-		} catch (SQLException ex) {
-			// TODO Auto-generated catch block
-			ex.printStackTrace();
-		}
-		return result;
-	}
-
-	@Override
-	public Employee getEmployee(int pm_id) {
-		Employee emp = null;
-		String SQL = "SELECT id, first_name, last_name, email, p_id, is_pm FROM employees WHERE id=?";
-		try {
-			PreparedStatement ps = con.prepareStatement(SQL);
-			ps.setInt(1, pm_id);
-			ResultSet rs = ps.executeQuery();
-			rs.next();
-			emp = new Employee(rs.getString("first_name"), rs.getString("last_name"), rs.getString("email"));
-			emp.setId(rs.getInt("id"));
-			emp.setIs_pm(rs.getBoolean("is_pm"));
-			emp.setP_id(rs.getInt("p_id"));
+			
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			throw new FetchException("Unable to fetch managers.",e);
+		}finally{
+			DBUtil.releaseStatement(preparedStatement);
+			DBUtil.releaseConnection(connection);
 		}
 		
-		return emp;
+		return projectManagers;
+		
 	}
 
-	@Override
-	public List<Employee> getExistingEmployees() {
-		List<Employee> emps = new ArrayList<Employee>();
-		String SQL = "SELECT id, first_name, last_name, email, p_id, is_pm FROM employees WHERE is_pm=?";
-		try {
-			PreparedStatement ps = con.prepareStatement(SQL);
-			ps.setBoolean(1, false);
-			ResultSet rs = ps.executeQuery();
-			while(rs.next()) {
-				Employee emp = new Employee(rs.getString("first_name"), rs.getString("last_name"), rs.getString("email"));
-				emp.setId(rs.getInt("id"));
-				emp.setIs_pm(rs.getBoolean("is_pm"));
-				emp.setP_id(rs.getInt("p_id"));
-				emps.add(emp);
-			}
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return emps;
-	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see com.adobe.prj.dao.EmployeeDao#getStaffEmployees()
+	 */
 
-	@Override
-	public List<Employee> getEmployeesOfProject(int id) {
-		List<Employee> emps = new ArrayList<Employee>();
-		String SQL = "SELECT id, first_name, last_name, email, p_id, is_pm FROM employees WHERE p_id=?";
+	public List<Employee> getStaffEmployees() throws FetchException {
+		
+		Connection connection = null;
+		PreparedStatement preparedStatement = null;
+		
+		List<Employee> staffList = new ArrayList<Employee>();
+		
+		
 		try {
-			PreparedStatement ps = con.prepareStatement(SQL);
-			ps.setInt(1, id);
-			ResultSet rs = ps.executeQuery();
-			while(rs.next()){
-				Employee emp = new Employee(rs.getString("first_name"), rs.getString("last_name"), rs.getString("email"));
-				emp.setId(rs.getInt("id"));
-				emp.setIs_pm(rs.getBoolean("is_pm"));
-				emp.setP_id(rs.getInt("p_id"));
-				emps.add(emp);
+			connection = DBUtil.getConnection();
+			
+			String getStaffEmployeesSql = "SELECT id, name,email,role FROM employee WHERE role=0;";
+			
+			preparedStatement = connection.prepareStatement(getStaffEmployeesSql);
+			
+			ResultSet resultSet = preparedStatement.executeQuery();
+			
+			while(resultSet.next()){
+				
 			}
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			throw new FetchException("Unable to fetch staff employee list.",e);
 		}
-		return emps;
+				
+		
+		return staffList;
 	}
-	*/
+	
+	
+	
 
 }
