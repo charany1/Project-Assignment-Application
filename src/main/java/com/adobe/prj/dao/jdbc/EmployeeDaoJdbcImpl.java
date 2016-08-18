@@ -2,49 +2,60 @@ package com.adobe.prj.dao.jdbc;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.ArrayList;
-import java.util.List;
 
 import com.adobe.prj.dao.EmployeeDao;
+import com.adobe.prj.dao.PersistenceException;
 import com.adobe.prj.entity.Employee;
+
+/*
+ * @author danchara
+ * 
+ *  Contains methods for CRUD operations on employee table in database.
+ */
 
 public class EmployeeDaoJdbcImpl implements EmployeeDao {
 
-	private static Connection con;
-	static {
+	
+	
+	
+	public int addEmployee(Employee employee) throws PersistenceException {
+			
+		int numRowsEffected = -1;
+		
+		Connection connection = null;
+		PreparedStatement preparedStatement = null;
+		
+		
 		try {
-			con = DBUtil.getConnection();
+			connection = DBUtil.getConnection();
+			
+			String addEmployeeSql = "INSERT INTO employee (name,email,role) VALUES (?,?,?);";
+			
+			preparedStatement = connection.prepareStatement(addEmployeeSql);
+			
+			
+			
+			
+			preparedStatement.setString(1, employee.getName());
+			preparedStatement.setString(2, employee.getEmail());
+			preparedStatement.setInt(3,employee.getRole().ordinal());
+			numRowsEffected = preparedStatement.executeUpdate();
+			
+			return numRowsEffected;
+			
+			
 		} catch (SQLException e) {
-			e.printStackTrace();
+			throw new PersistenceException("Unable to add employee.",e);
+		
+		}finally {
+			DBUtil.releaseStatement(preparedStatement);
+			DBUtil.releaseConnection(connection);
 		}
 	}
 	
-	@Override
-	public void addEmployee() {
-		
-		String first_name = "emp1"; // TODO read from console
-		String last_name = "loyee2"; // TODO read from console
-		String email = "emp@loyee.com"; // TODO read from console
-		Employee e = new Employee(first_name, last_name, email);
-		try {
-			String SQL = "INSERT INTO employees (id, first_name, last_name, email, p_id, is_pm) VALUES (?,?,?,?,?,?)";
-			PreparedStatement ps = con.prepareStatement(SQL);
-			ps.setInt(1, e.getId());
-			ps.setString(2, e.getFirst_name());
-			ps.setString(3, e.getLast_name());
-			ps.setString(4, e.getEmail());
-			ps.setInt(5, e.getP_id());
-			ps.setBoolean(6, e.isIs_pm());
-			ps.executeUpdate();
-		} catch (SQLException ex) {
-			ex.printStackTrace();
-		}
-		
-	}
-
+	
+	/*
 	@Override
 	public List<Employee> getExistingProjectManagers() {
 		String SQL = "SELECT id, first_name, last_name, email, p_id, is_pm FROM employees WHERE is_pm=true";
@@ -132,5 +143,6 @@ public class EmployeeDaoJdbcImpl implements EmployeeDao {
 		}
 		return emps;
 	}
-	
+	*/
+
 }

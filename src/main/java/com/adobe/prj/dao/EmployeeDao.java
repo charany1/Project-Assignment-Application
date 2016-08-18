@@ -5,8 +5,9 @@ import java.util.List;
 import com.adobe.prj.entity.Employee;
 
 public interface EmployeeDao {
-	public void addEmployee();
+	public int addEmployee(Employee employee) throws PersistenceException;
 
+	/*
 	public List<Employee> getExistingProjectManagers();
 
 	public Employee getEmployee(int pm_id);
@@ -14,4 +15,5 @@ public interface EmployeeDao {
 	public List<Employee> getExistingEmployees();
 
 	public List<Employee> getEmployeesOfProject(int id);
+	*/
 }

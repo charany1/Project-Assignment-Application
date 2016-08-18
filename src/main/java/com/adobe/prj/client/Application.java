@@ -3,30 +3,32 @@
  */
 package com.adobe.prj.client;
 
-import java.util.Iterator;
-import java.util.List;
-
+import com.adobe.prj.client.service.AddEmployeeService;
+import com.adobe.prj.client.service.AddProjectService;
+import com.adobe.prj.client.ui.AddEmployeeUi;
 import com.adobe.prj.dao.EmployeeDao;
-import com.adobe.prj.dao.EmployeeDaoFactory;
-import com.adobe.prj.dao.ProjectDao;
-import com.adobe.prj.dao.ProjectDaoFactory;
+import com.adobe.prj.dao.PersistenceException;
+import com.adobe.prj.dao.jdbc.EmployeeDaoJdbcImpl;
 import com.adobe.prj.entity.Employee;
-import com.adobe.prj.entity.Project;
 
 /**
  * @author rahujai
+ * @author danchara
  *
  * @version 1.0
+ * 
+ * 
+ * Entry point for interacting with application .
  */
-public class ProjectAssigningApp {
+public class Application {
 
 	/**
 	 * @param args
 	 */
 
-	private static ProjectDao pd = ProjectDaoFactory.getProjectDao();
-	private static EmployeeDao ed = EmployeeDaoFactory.getEmployeeDao();
-	
+	//private static ProjectDao pd = ProjectDaoFactory.getProjectDao();
+	//private static EmployeeDao ed = EmployeeDaoFactory.getEmployeeDao();
+	/*
 	private static void addStaff() {
 		List<Project> projects = pd.getAllProjects();
 		System.out.println("Existing projects: ");
@@ -76,20 +78,19 @@ public class ProjectAssigningApp {
 			}
 		});
 	}
-	
+	*/
+	/**
+	 * @param args
+	 */
 	public static void main(String[] args) {
 		
-		//Class.forName("ProjectDetails").getClassLoader().loadClass()
+		//AddEmployeeService.getAndAddEmployee();
 		
-		pd.addProject();
+		//AddProjectService.getAndAddProject();
 		
-//		ed.addEmployee();
-//		
-//		assignPm();
-//		
-//		addStaff();
-//		
-//		output();
+		
+		
+		
 	}
 
 }

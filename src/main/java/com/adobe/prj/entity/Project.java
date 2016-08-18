@@ -3,41 +3,62 @@
  */
 package com.adobe.prj.entity;
 
-import com.adobe.prj.annotations.Column;
-import com.adobe.prj.annotations.Table;
-import com.adobe.prj.dao.ProjectDetails;
 
 /**
  * @author rahujai
  *
  */
-@Table(name="projects")
 public class Project {
-	private int id;
+	private String id;
 	private String name;
-	private int pm_id;
-	public Project(String name) {
+	private boolean hasProjectManager;
+	/**
+	 * @param id
+	 * @param name
+	 * @param hasProjectManager
+	 */
+	public Project(String id, String name, boolean hasProjectManager) {
+		this.id = id;
 		this.name = name;
-		this.id = ProjectDetails.total + 1;
-		this.pm_id = -1;
+		this.hasProjectManager = hasProjectManager;
 	}
 	/**
 	 * @return the id
 	 */
-	@Column(name="id", type="NUMERIC(10)")
-	public final int getId() {
+	public final String getId() {
 		return id;
 	}
 	/**
 	 * @param id the id to set
 	 */
-	public final void setId(int id) {
+	public final void setId(String id) {
 		this.id = id;
+	}
+	
+	/**
+	 * 
+	 */
+	public Project() {
+		super();
+	}
+	/**
+	 * 
+	 * @param name
+	 * @param hasProjectManager
+	 */
+	public Project( String name, boolean hasProjectManager) {
+		
+		this.name = name;
+		this.hasProjectManager = hasProjectManager;
+	}
+	public Project(String projectName) {
+		
+		this.name = projectName;
+	
 	}
 	/**
 	 * @return the name
 	 */
-	@Column(name="name")
 	public final String getName() {
 		return name;
 	}
@@ -48,16 +69,18 @@ public class Project {
 		this.name = name;
 	}
 	/**
-	 * @return the pm_id
+	 * @return the hasProjectManager
 	 */
-	@Column(name="pm_id", type="NUMERIC(10)")
-	public final int getPm_id() {
-		return pm_id;
+	public final boolean isHasProjectManager() {
+		return hasProjectManager;
 	}
 	/**
-	 * @param pm_id the pm_id to set
+	 * @param hasProjectManager the hasProjectManager to set
 	 */
-	public final void setPm_id(int pm_id) {
-		this.pm_id = pm_id;
+	public final void setHasProjectManager(boolean hasProjectManager) {
+		this.hasProjectManager = hasProjectManager;
 	}
+	
+	
+	
 }

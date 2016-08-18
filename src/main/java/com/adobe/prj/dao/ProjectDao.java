@@ -12,7 +12,7 @@ import com.adobe.prj.entity.Project;
  *
  */
 public interface ProjectDao {
-	public void addProject();
-	public List<Project> getExistingProjects();
-	public List<Project> getAllProjects();
+	public int addProject(Project project) throws PersistenceException;
+	public List<Project> getExistingProjectsWithoutManager() throws FetchException;
+//	public List<Project> getAllProjects();
 }

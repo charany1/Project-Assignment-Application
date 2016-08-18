@@ -21,6 +21,8 @@ public class DBUtil {
 	private static String PWD = ConfigReader.getString("DB_PWD"); //$NON-NLS-1$
 
 	public static Connection getConnection() throws SQLException {
+		
+		System.out.println(URL+" "+USER+" "+PWD);
 		return DriverManager.getConnection(URL, USER, PWD);
 	}
 	
@@ -45,6 +47,20 @@ public class DBUtil {
 		}
 	}
 	
+	
+	public static void main(){
+		Connection con = null;
+		try {
+			con = DBUtil.getConnection();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		if(con!=null){
+			System.out.println("Successfully connected to mysql!!");
+		}
+	}
 
 }
 
