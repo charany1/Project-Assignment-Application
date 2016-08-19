@@ -65,4 +65,41 @@ public class ProjectEmployeeDaoJdbcImpl implements ProjectEmployeeDao {
 		return numRowsEffected;
 	}
 
+	
+	/*
+	 * (non-Javadoc)
+	 * @see com.adobe.prj.dao.ProjectEmployeeDao#addProjectStaffAssignment(int, int)
+	 */
+	public int addProjectStaffAssignment(int projectId, int staffId) throws PersistenceException {
+		
+		Connection connection = null ;
+		PreparedStatement preparedStatement = null ;
+		
+		int numRowsEffected;
+		
+		try {
+			connection = DBUtil.getConnection();
+			String addProjectManagerAssignmentSql = "INSERT INTO project_employee(project_id,employee_id)"
+					+ " VALUES(?,?);";
+			preparedStatement = connection.prepareStatement(addProjectManagerAssignmentSql);
+			
+			preparedStatement.setInt(1, projectId);
+			preparedStatement.setInt(2, staffId);
+			
+			numRowsEffected = preparedStatement.executeUpdate();
+			
+			
+			
+			
+		} catch (SQLException e) {
+			throw new PersistenceException("Unable to assign staff to project.",e);
+		}
+		
+		
+		return numRowsEffected;
+		
+		
+		
+	}
+
 }

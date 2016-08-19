@@ -140,11 +140,28 @@ public class EmployeeDaoJdbcImpl implements EmployeeDao {
 			
 			ResultSet resultSet = preparedStatement.executeQuery();
 			
+			
+			Employee employee ;
+			
+			int employeeId;
+			String employeeName;
+			String employeeEmail;
+			int employeeRole;
 			while(resultSet.next()){
+				employeeId = resultSet.getInt(1);
+				employeeName = resultSet.getString(2);
+				employeeEmail = resultSet.getString(3);
+				employeeRole = resultSet.getInt(4);
 				
+				employee = new Employee(employeeId,employeeName,employeeEmail,employeeRole);
+				
+				staffList.add(employee);
 			}
 		} catch (SQLException e) {
 			throw new FetchException("Unable to fetch staff employee list.",e);
+		}finally{
+			DBUtil.releaseStatement(preparedStatement);
+			DBUtil.releaseConnection(connection);
 		}
 				
 		
