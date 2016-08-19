@@ -11,20 +11,20 @@ import java.util.List;
  */
 public class ProjectDetailsDto {
 	
-	private String projectId;
+	private int projectId;
 	private String projectName;
 	private String managerName;
 	private List<String> staff = new ArrayList<String>();
 	/**
 	 * @return the projectId
 	 */
-	public final String getProjectId() {
+	public final int getProjectId() {
 		return projectId;
 	}
 	/**
 	 * @param projectId the projectId to set
 	 */
-	public final void setProjectId(String projectId) {
+	public final void setProjectId(int projectId) {
 		this.projectId = projectId;
 	}
 	/**
@@ -69,7 +69,7 @@ public class ProjectDetailsDto {
 	 * @param managerName
 	 * @param staff
 	 */
-	public ProjectDetailsDto(String projectId, String projectName, String managerName, List<String> staff) {
+	public ProjectDetailsDto(int projectId, String projectName, String managerName, List<String> staff) {
 		this.projectId = projectId;
 		this.projectName = projectName;
 		this.managerName = managerName;

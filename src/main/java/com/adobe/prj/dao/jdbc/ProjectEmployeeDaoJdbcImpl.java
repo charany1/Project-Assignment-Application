@@ -5,11 +5,16 @@ package com.adobe.prj.dao.jdbc;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
+import com.adobe.prj.dao.FetchException;
 import com.adobe.prj.dao.PersistenceException;
 import com.adobe.prj.dao.ProjectDao;
 import com.adobe.prj.dao.ProjectEmployeeDao;
+import com.adobe.prj.dto.ProjectDetailsDto;
 
 /**
  * @author danchara
@@ -59,6 +64,9 @@ public class ProjectEmployeeDaoJdbcImpl implements ProjectEmployeeDao {
 			
 		} catch (SQLException e) {
 			throw new PersistenceException("Unable to assign manager to project.",e);
+		}finally {
+			DBUtil.releaseStatement(preparedStatement);
+			DBUtil.releaseConnection(connection);
 		}
 		
 		
@@ -93,6 +101,9 @@ public class ProjectEmployeeDaoJdbcImpl implements ProjectEmployeeDao {
 			
 		} catch (SQLException e) {
 			throw new PersistenceException("Unable to assign staff to project.",e);
+		}finally {
+			DBUtil.releaseStatement(preparedStatement);
+			DBUtil.releaseConnection(connection);
 		}
 		
 		
@@ -100,6 +111,108 @@ public class ProjectEmployeeDaoJdbcImpl implements ProjectEmployeeDao {
 		
 		
 		
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see com.adobe.prj.dao.ProjectEmployeeDao#getProjectDetailForListing(int)
+	 */
+	public ProjectDetailsDto getProjectDetailForListing(int projectId) throws FetchException {
+		
+		Connection connection = null;
+		PreparedStatement preparedStatement = null;
+		
+		ProjectDetailsDto projectDetailsDto;
+		
+
+		try {
+			connection = DBUtil.getConnection();
+			String getProjectDetailsDtoSql = "SELECT project_id,project_name,result.employee_id,employee.name AS employee_name,role "
+					+ " FROM "
+					+ " (SELECT project.id AS project_id,project.name AS project_name,employee_id FROM project "
+					+ "LEFT JOIN "
+					+ "project_employee "
+					+ "ON project.id=project_employee.project_id)"
+					+ " AS result "
+					+ "LEFT JOIN "
+					+ "employee ON employee.id = result.employee_id WHERE project_id = ?;";
+			
+			preparedStatement = connection.prepareStatement(getProjectDetailsDtoSql);
+			
+			preparedStatement.setInt(1, projectId);
+			
+			ResultSet resultSet = preparedStatement.executeQuery();
+			
+			
+			
+			
+			String projectName = null;
+			String managerName = null;
+			String employeeName = null;
+			List<String> staff = new ArrayList<String>();
+			int role ;
+			
+			
+			
+			while(resultSet.next()){
+				
+				if(projectName == null){
+					projectName = resultSet.getString(2);
+				}
+				
+				employeeName = resultSet.getString(4);
+				
+				
+				//getting manager's name 
+				
+				role = resultSet.getInt(5);
+				
+				if(role == 1 && managerName == null){
+					managerName = employeeName;
+				}else if(employeeName != null){
+					staff.add(employeeName);
+				}
+				
+				
+				
+				
+			}
+			projectDetailsDto = new ProjectDetailsDto(projectId, projectName, managerName, staff);
+		} catch (SQLException e) {
+			e.printStackTrace();
+			throw new FetchException("Couldn't fetch ProjectDetailsDto",e);
+		}finally {
+			DBUtil.releaseStatement(preparedStatement);
+			DBUtil.releaseConnection(connection);
+		}
+		
+		
+		
+		
+		return projectDetailsDto;
+	}
+
+	
+	/*
+	 * (non-Javadoc)
+	 * @see com.adobe.prj.dao.ProjectEmployeeDao#getAllProjectsDetailsForListing()
+	 */
+	public List<ProjectDetailsDto> getAllProjectsDetailsForListing() throws FetchException {
+		
+		ProjectDao projectDao = new ProjectDaoJdbcImpl();
+		
+		int numberOfProjects = projectDao.getNumberOfProject();
+		
+		
+		List<ProjectDetailsDto> projectDetailsDtoList = new ArrayList<ProjectDetailsDto>();
+		
+		for (int projectId = 1; projectId <= numberOfProjects; projectId++) {
+			projectDetailsDtoList.add(getProjectDetailForListing(projectId));
+			
+		}
+		
+		
+		return projectDetailsDtoList;
 	}
 
 }

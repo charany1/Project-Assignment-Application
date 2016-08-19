@@ -20,4 +20,6 @@ public interface ProjectDao {
 	public int updateProjectHasManager(int projectId)throws PersistenceException;
 	
 	public List<Project> getAllProjects() throws FetchException;
+	
+	public int getNumberOfProject() throws FetchException;
 }

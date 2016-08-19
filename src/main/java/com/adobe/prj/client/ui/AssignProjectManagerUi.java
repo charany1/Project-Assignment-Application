@@ -4,8 +4,8 @@
 package com.adobe.prj.client.ui;
 
 import java.util.List;
-import java.util.Scanner;
 
+import com.adobe.prj.client.Application;
 import com.adobe.prj.entity.Employee;
 import com.adobe.prj.entity.Project;
 
@@ -22,10 +22,6 @@ public class AssignProjectManagerUi {
 	private List<Employee> managerList;
 	private List<Project> projectsWithoutManagers;
 	
-	private static Scanner inputreader;
-	
-	
-	
 	/**
 	 * @param managerList
 	 * @param projectsWithoutManagers
@@ -33,7 +29,6 @@ public class AssignProjectManagerUi {
 	public AssignProjectManagerUi(List<Employee> managerList, List<Project> projectsWithoutManagers) {
 		this.managerList = managerList;
 		this.projectsWithoutManagers = projectsWithoutManagers;
-		inputreader = new Scanner(System.in);
 	}
 	
 	
@@ -62,7 +57,7 @@ public class AssignProjectManagerUi {
 		do{
 		System.out.println("Please enter id of manager you want to choose from the above shown :");
 		
-		enteredEmployeeIdOfManager = inputreader.nextInt();
+		enteredEmployeeIdOfManager = Application.inputReader.nextInt();
 		
 		
 		if(isEnteredManagerIdValid(enteredEmployeeIdOfManager)){
@@ -71,10 +66,7 @@ public class AssignProjectManagerUi {
 				System.out.println("Incorrect id entered!!");
 			}
 		}while(true);
-		
-		
-		
-		inputreader.close();
+				
 		return enteredEmployeeIdOfManager;
 	}
 	
@@ -115,10 +107,9 @@ public class AssignProjectManagerUi {
 		int enteredIdOfProject;
 		
 		
-		
 		do{	
 			System.out.println("Please chose a project id from above shown :");
-			enteredIdOfProject = inputreader.nextInt();
+			enteredIdOfProject = Application.inputReader.nextInt();
 			
 			if(isValidProjectid(enteredIdOfProject)){
 				break;

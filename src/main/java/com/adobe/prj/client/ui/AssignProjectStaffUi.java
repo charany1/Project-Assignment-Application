@@ -4,8 +4,8 @@
 package com.adobe.prj.client.ui;
 
 import java.util.List;
-import java.util.Scanner;
 
+import com.adobe.prj.client.Application;
 import com.adobe.prj.entity.Employee;
 import com.adobe.prj.entity.Project;
 
@@ -18,9 +18,6 @@ public class AssignProjectStaffUi {
 	
 	private List<Employee> staffList;
 	private List<Project> projectList;
-	
-	private static Scanner inputreader;
-
 	/**
 	 * @param staffList
 	 * @param projectList
@@ -28,8 +25,7 @@ public class AssignProjectStaffUi {
 	public AssignProjectStaffUi(List<Employee> staffList, List<Project> projectList) {
 		this.staffList = staffList;
 		this.projectList = projectList;
-		inputreader = new Scanner(System.in);
-	}
+		}
 	
 	
 	/*
@@ -58,7 +54,7 @@ public class AssignProjectStaffUi {
 		do{
 		System.out.println("Please enter id of staff you want to choose from the above shown :");
 		
-		enteredEmployeeIdOfStaff = inputreader.nextInt();
+		enteredEmployeeIdOfStaff = Application.inputReader.nextInt();
 		
 		
 		if(isEnteredStaffIdValid(enteredEmployeeIdOfStaff)){
@@ -69,8 +65,6 @@ public class AssignProjectStaffUi {
 		}while(true);
 		
 		
-		
-		inputreader.close();
 		return enteredEmployeeIdOfStaff;
 	}
 
@@ -115,7 +109,7 @@ public class AssignProjectStaffUi {
 		
 		do{	
 			System.out.println("Please chose a project id from above shown :");
-			enteredIdOfProject = inputreader.nextInt();
+			enteredIdOfProject = Application.inputReader.nextInt();
 			
 			if(isValidProjectid(enteredIdOfProject)){
 				break;

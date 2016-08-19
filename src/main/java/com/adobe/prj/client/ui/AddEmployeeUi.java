@@ -3,8 +3,7 @@
  */
 package com.adobe.prj.client.ui;
 
-import java.util.Scanner;
-
+import com.adobe.prj.client.Application;
 import com.adobe.prj.entity.Employee;
 
 /**
@@ -23,19 +22,15 @@ public class AddEmployeeUi {
 	public static Employee getEmployeeDetailsFromConsole(){
 		
 		Employee employee;
-		
-		
-		
 		String employeeName = null;
 		String employeeEmail = null;
 		int role =-1;
-		
-		Scanner inputreader=new Scanner(System.in);
-		
+				
 		
 		do{
+			Application.inputReader.nextLine();
 		    System.out.println("Enter the name of the employee");
-			employeeName = inputreader.nextLine();
+			employeeName = Application.inputReader.nextLine();
 			if(employeeName==null||employeeName.trim().equals("")){
 				System.out.println("Please enter employee name correctly : ");
 			}else{
@@ -50,7 +45,7 @@ public class AddEmployeeUi {
 		
 		do{
 			System.out.println("Enter the e-mail id of the employee");
-			employeeEmail=inputreader.nextLine();
+			employeeEmail=Application.inputReader.nextLine();
 			if(employeeEmail==null||employeeEmail.trim().equals("") ||(!isValidEmailAddress(employeeEmail))){
 				System.out.println("Please enter you email correctly : ");
 				continue;
@@ -62,16 +57,14 @@ public class AddEmployeeUi {
 		
 		do{
 			System.out.println("Is this employee a staff member(enter 0) or project manager(enter 1) ?");
-			role=inputreader.nextInt();
+			role=Application.inputReader.nextInt();
 			if((role== -1) || !(role==0||role==1)){
 				System.out.println("Please enter the choice correctly");
 			}else{
 				break;
 			}
 		}while(true);	
-		
-		inputreader.close();
-		
+				
 		employee = new Employee(employeeName,employeeEmail,role);
 		
 		return employee;
@@ -99,5 +92,7 @@ public class AddEmployeeUi {
 		System.out.println("Role : "+ employee.getRole());
 		
 	}
+	
+	
 
 }

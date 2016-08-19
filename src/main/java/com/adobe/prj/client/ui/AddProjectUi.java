@@ -3,8 +3,7 @@
  */
 package com.adobe.prj.client.ui;
 
-import java.util.Scanner;
-
+import com.adobe.prj.client.Application;
 import com.adobe.prj.entity.Project;
 
 /**
@@ -26,12 +25,11 @@ public class AddProjectUi {
 		
 		String projectName;
 		
-		Scanner inputreader=new Scanner(System.in);
-		
 		
 		do{
+			Application.inputReader.nextLine();
 			System.out.println("Enter the name of the project :");
-			projectName = inputreader.nextLine();
+			projectName = Application.inputReader.nextLine();
 			if(projectName==null||projectName.trim().equals("")){
 				System.out.println("Please enter the project name correctly : ");
 			}else{
@@ -41,8 +39,6 @@ public class AddProjectUi {
 		}while(true);
 		
 		project = new Project(projectName);
-		
-		inputreader.close();
 		
 		return project;
 		

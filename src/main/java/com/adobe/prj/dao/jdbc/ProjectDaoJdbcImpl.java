@@ -198,11 +198,49 @@ public class ProjectDaoJdbcImpl implements ProjectDao {
 			
 		} catch (SQLException e) {
 			throw new FetchException("Unable to fetch all projects.",e);
+		}finally {
+			DBUtil.releaseStatement(statement);
+			DBUtil.releaseConnection(connection);
 		}
 		
 		
 		
 		return projectList;
+	}
+
+
+	public int getNumberOfProject() throws FetchException {
+		Connection connection = null;
+		Statement statement = null;
+		
+		int numberOfProjects = 0;
+		
+		try {
+			connection = DBUtil.getConnection();
+			statement = connection.createStatement();
+			
+			String getNumberOfProjectSql = "SELECT max(id) FROM project;";
+			
+			ResultSet resultSet = statement.executeQuery(getNumberOfProjectSql);
+			while(resultSet.next()){
+			numberOfProjects = resultSet.getInt(1);
+			System.out.println("Number of projects : "+numberOfProjects);
+			}
+			
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+			throw new FetchException("Unable to get total number of projects.",e);
+		
+		}finally {
+			DBUtil.releaseStatement(statement);
+			DBUtil.releaseConnection(connection);
+		}
+		
+		
+		
+		
+		return numberOfProjects;
 	}
 
 	
