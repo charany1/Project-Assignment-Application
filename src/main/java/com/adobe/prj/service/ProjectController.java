@@ -93,19 +93,31 @@ public class ProjectController {
 		return null;
 	}
 	
-	@RequestMapping(value="manager/{id}",method=RequestMethod.POST)
-	public ResponseEntity<String> addProjectManagerAssignment(@PathVariable("id") int projectId,@RequestBody int employeeId){//no void
+	@RequestMapping(value="/projectemployee/{id}",method=RequestMethod.GET)
+	public @ResponseBody List<Project> getProjectsWithoutManagers(){
+		try {
+			return projectDao.getProjectsWithoutManager();
+		} catch (FetchException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		//System.out.println("World");
+		return null;
+	}
+	
+	@RequestMapping(value="project/{project_id}/manager/{employee_id}",method=RequestMethod.POST)
+	public ResponseEntity<String> addProjectManagerAssignment(@PathVariable("project_id") int projectId,@PathVariable("employee_id") int employeeId){//no void
 		try {
 			projectemployeeDao.addProjectManagerAssignemnt(projectId, employeeId);
 		} catch (PersistenceException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		return new ResponseEntity<String>("Manager id: " + projectId + "Employee id: "+ employeeId,HttpStatus.CREATED);
+		return new ResponseEntity<String>("Project id: " + projectId + "Employee id: "+ employeeId,HttpStatus.CREATED);
 	}
 	
-	@RequestMapping(value="/assign/staff",method=RequestMethod.POST)
-	public ResponseEntity<String> addProjectStaffAssignment(@RequestBody int projectId,@RequestBody int employeeId){//no void
+	@RequestMapping(value="project/{project_id}/staff/{employee_id}",method=RequestMethod.POST)
+	public ResponseEntity<String> addProjectStaffAssignment(@PathVariable("project_id") int projectId,@PathVariable("employee_id") int employeeId){//no void
 		try {
 			projectemployeeDao.addProjectStaffAssignment(projectId, employeeId);
 		} catch (PersistenceException e) {
