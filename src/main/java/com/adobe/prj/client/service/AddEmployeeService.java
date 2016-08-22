@@ -21,6 +21,12 @@ public class AddEmployeeService {
 		Employee employee = AddEmployeeUi.getEmployeeDetailsFromConsole();
 		
 		EmployeeDao employeeDao = new EmployeeDaoJdbcImpl();
+		/*try {
+			employeeDao.getAllEmployees();
+		} catch (FetchException e1) {
+			System.out.println("Hello World");
+			e1.printStackTrace();
+		}*/
 		
 		try {
 			int numRowsEffected = employeeDao.addEmployee(employee);

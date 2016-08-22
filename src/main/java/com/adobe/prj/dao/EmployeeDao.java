@@ -11,4 +11,6 @@ public interface EmployeeDao {
 	public List<Employee> getProjectManagers() throws FetchException;
 	
 	public List<Employee> getStaffEmployees() throws FetchException;
+	
+	public List<Employee> getAllEmployees() throws FetchException;
 }

@@ -4,8 +4,11 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
+
+import org.springframework.stereotype.Repository;
 
 import com.adobe.prj.dao.EmployeeDao;
 import com.adobe.prj.dao.FetchException;
@@ -18,6 +21,7 @@ import com.adobe.prj.entity.Employee;
  *  Contains methods for CRUD operations on employee table in database.
  */
 
+@Repository("employeeDao")
 public class EmployeeDaoJdbcImpl implements EmployeeDao {
 
 	
@@ -169,6 +173,45 @@ public class EmployeeDaoJdbcImpl implements EmployeeDao {
 	}
 	
 	
-	
-
+	public List<Employee> getAllEmployees() throws FetchException {
+		
+		Connection connection = null;
+		Statement statement = null;
+		
+		List<Employee> AllList = new ArrayList<Employee>();
+		
+		try {
+			
+			connection = DBUtil.getConnection();
+			statement = connection.createStatement();
+			
+			String getAllEmployeesSql = "SELECT id,name,email,role FROM employee;";
+			
+			ResultSet resultSet = statement.executeQuery(getAllEmployeesSql);
+			
+			Employee employee ;
+			int employeeId;
+			String employeeName;
+			String employeeEmail;
+			int employeeRole;
+			
+			while(resultSet.next()){
+				employeeId = resultSet.getInt(1);
+				employeeName = resultSet.getString(2);
+				employeeEmail = resultSet.getString(3);
+				employeeRole = resultSet.getInt(4);
+				
+				employee = new Employee(employeeId,employeeName,employeeEmail,employeeRole);
+				
+				AllList.add(employee);
+			}
+		} catch (SQLException e) {
+			throw new FetchException("Unable to fetch staff employee list.",e);
+		}finally{
+			DBUtil.releaseStatement(statement);
+			DBUtil.releaseConnection(connection);
+		}
+		
+		return AllList;
+	}
 }

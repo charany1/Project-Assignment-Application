@@ -3,12 +3,18 @@
  */
 package com.adobe.prj.entity;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  * @author rahujai
  *	@author danchara 
  *
  */
+
+@XmlRootElement(name="employee")
+@XmlAccessorType(XmlAccessType.FIELD)
 
 public class Employee {
 	
@@ -44,14 +50,7 @@ public class Employee {
 	public final void setId(int id) {
 		this.id = id;
 	}
-
-
-
-
-
 	
-	
-
 	/**
 	 * 
 	 */

@@ -25,7 +25,6 @@ public class Application {
 	/**
 	 * @param args
 	 */
-	
 	public static Scanner inputReader = new Scanner(System.in);
 	public static void main(String[] args) {
 		

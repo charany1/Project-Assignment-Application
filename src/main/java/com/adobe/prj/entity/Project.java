@@ -3,11 +3,18 @@
  */
 package com.adobe.prj.entity;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  * @author rahujai
  *
  */
+
+@XmlRootElement(name="project")
+@XmlAccessorType(XmlAccessType.FIELD)
+
 public class Project {
 	private int  id;
 	private String name;

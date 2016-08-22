@@ -11,6 +11,8 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.stereotype.Repository;
+
 import com.adobe.prj.dao.FetchException;
 import com.adobe.prj.dao.PersistenceException;
 import com.adobe.prj.dao.ProjectDao;
@@ -23,6 +25,8 @@ import com.adobe.prj.entity.Project;
  * For CRUD operations on project table in database.
  *
  */
+
+@Repository("projectDao")
 public class ProjectDaoJdbcImpl implements ProjectDao {
 	
 	/*
